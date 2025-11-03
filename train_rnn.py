@@ -91,7 +91,7 @@ def main(args):
 
     # save tokenizer and model
     os.makedirs(args.save_dir, exist_ok=True)
-    model.save(os.path.join(args.save_dir, 'final_model'))
+    model.save(os.path.join(args.save_dir, 'final_model.keras'))
     import json
     with open(os.path.join(args.save_dir, 'tokenizer.json'), 'w', encoding='utf-8') as f:
         f.write(tokenizer.to_json())
