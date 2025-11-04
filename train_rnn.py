@@ -20,13 +20,29 @@ nltk.download('stopwords', quiet=True)
 EN_STOPWORDS = set(stopwords.words('english'))
 
 def clean_text(text):
-    # Basic cleaning: remove HTML tags, non-letters, lowercase
     text = re.sub(r"<.*?>", " ", text)
     text = re.sub(r"[^a-zA-Z']", " ", text)
     text = text.lower()
-    # optional: remove short words
-    tokens = [w for w in text.split() if len(w) > 1 and w not in EN_STOPWORDS]
-    return " ".join(tokens)
+    words = text.split()
+    
+    # Handle negations like "not good" -> "not_good"
+    negations = {"not", "no", "never", "n't","bad"}
+    new_words = []
+    skip_next = False
+
+    for i, w in enumerate(words):
+        if skip_next:
+            skip_next = False
+            continue
+        if w in negations and i + 1 < len(words):
+            new_words.append(w + "_" + words[i + 1])
+            skip_next = True
+        else:
+            new_words.append(w)
+    
+    words = [w for w in new_words if w not in STOPWORDS and len(w) > 1]
+    return " ".join(words)
+
 
 def load_data(csv_path, sample=None):
     df = pd.read_csv(csv_path)
